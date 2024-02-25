@@ -98,6 +98,17 @@ apiKey：gpt-proxy-xfxh
 
 > 可通过gpt.proxy.key-prefix= xxx 配置更改前缀
 
+
+## 配合使用软件
+1. [next-web](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
+
+2. [botgem](https://botgem.com/)
+
+    > 全平台客户端，支持ios，安卓，macos，windows
+
+3. [AI Coding](https://plugins.jetbrains.com/plugin/21263-ai-coding)
+    > 自动生成 git message,idea中的gpt插件
+
 ## 说明
 
 个人学习项目，仅供参考。
