@@ -53,14 +53,21 @@ public abstract class BaseChatSession {
 
 
     public Flux<String> chat(List<ChatMessage> messages) {
-        if (messages.size() % 2 == 0) {
-            //如果是偶数,则第一条是系统消息,需要改为用户消息
-            ChatMessage systemMsg = messages.get(0);
-            ChatMessage assistantMsg = ChatMessage.build(ChatRoleEnum.USER, systemMsg.getContent());
-            messages.set(0, assistantMsg);
-            messages.add(1, ChatMessage.build(ChatRoleEnum.ASSISTANT, "好的"));
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        if (!ChatBot.isOpenAi(this.getChatBot())) {
+            //非openai请求需要处理system消息,转为user请求
+            messages.forEach(message -> {
+                if (ChatRoleEnum.SYSTEM.equals(message.getRole())) {
+                    chatMessages.add(ChatMessage.build(ChatRoleEnum.USER, message.getContent()));
+                    chatMessages.add(ChatMessage.build(ChatRoleEnum.ASSISTANT, "好的"));
+                }else {
+                    chatMessages.add(message);
+                }
+            });
+        }else {
+            chatMessages.addAll(messages);
         }
-        Flux<String> webFlux = postChat(messages.get(messages.size() - 1).getContent(), new ArrayList<>(messages));
+        Flux<String> webFlux = postChat(messages.get(messages.size() - 1).getContent(), chatMessages);
         if (ChatBot.isOpenAi(this.getChatBot())) {
             return webFlux;
         }

@@ -5,8 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.mahaonan.gpt.proxy.chat.BaseChatSession;
 import com.mahaonan.gpt.proxy.chat.ChatMessage;
-import com.mahaonan.gpt.proxy.chat.ChatRoleEnum;
-import com.mahaonan.gpt.proxy.config.ApplicationConfig.*;
+import com.mahaonan.gpt.proxy.config.ApplicationConfig.PollingChatSessionHolder;
 import com.mahaonan.gpt.proxy.config.properties.GptProxyProperties;
 import com.mahaonan.gpt.proxy.model.GptProxyRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,8 +33,7 @@ public class ChatGptProxyService {
     public Flux<String> chat(@RequestBody GptProxyRequest request) {
         List<ChatMessage> messages = request.getMessages();
         if (CollectionUtil.isEmpty(messages)) {
-            messages = new ArrayList<>();
-            messages.add(ChatMessage.build(ChatRoleEnum.USER, request.getPrompt()));
+           return Flux.just("");
         }
         String question = messages.get(messages.size() - 1).getContent();
         //判断是否以特殊指令开头

@@ -250,6 +250,7 @@ public class HttpClientPro {
 
             SSLContext sc = SSLContext.getInstance("TLS");
             sc.init(null, new TrustManager[] { trustManager }, null);
+            System.setProperty("jdk.internal.httpclient.disableHostnameVerification","true");//取消主机名验证
             return sc;
         }
 
