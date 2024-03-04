@@ -12,6 +12,7 @@ public enum BotType {
     ALI_GPT("ali"),
     XFXH_GPT("xfxh"),
     GEMINI_GPT("gemini"),
+    COPILOT("copilot"),
     //轮询
     ALL("all")
     ;

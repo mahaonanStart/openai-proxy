@@ -32,4 +32,7 @@ public class GptProxyProperties {
     @NestedConfigurationProperty
     private OpenaiProperties openai = new OpenaiProperties();
 
+    @NestedConfigurationProperty
+    private CopilotProperties copilot = new CopilotProperties();
+
 }

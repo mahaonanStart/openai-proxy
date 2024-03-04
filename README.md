@@ -2,7 +2,7 @@
 
 ## 介绍
 
-openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口.
+openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口. 讯飞星火,通义千问,gemini,openai,copilot
 使用spring2+webflux构建
 
 目前支持的厂商有:
@@ -11,6 +11,7 @@ openai通用代理转换是一个用于将其他厂商服务转为openai 标准�
 - 谷歌 -> gemini
 - bito 
 - openai
+- copilot
 
 ## 版本要求
 
@@ -78,6 +79,13 @@ gpt.proxy.openai.model=
 gpt.proxy.openai.api-key=
 ```
 
+### copilot
+gpt.proxy.copilot.enabled=false
+gpt.proxy.copilot.model=gpt-4
+gpt.proxy.copilot.api-key=
+
+> copilot代码来源于[gpt4-copilot-java](https://github.com/Yanyutin753/gpt4-copilot-java?tab=readme-ov-file),key和tokenUrl的概念参考该项目
+
 ## 使用方法
 
 在支持输入openai服务的第三方软件，例如next-web上指定配置
@@ -97,6 +105,7 @@ apiKey：gpt-proxy-xfxh
 - gemini：gpt-proxy-gemini
 - bito：gpt-proxy-bito
 - openai：gpt-proxy-openai
+- copilot: gpt-proxy-copilot
 - 轮询：gpt-proxy-all
 
 > 可通过gpt.proxy.key-prefix= xxx 配置更改前缀
@@ -115,3 +124,7 @@ apiKey：gpt-proxy-xfxh
 ## 说明
 
 个人学习项目，仅供参考。
+
+## 致谢
+[gpt4-copilot-java](https://github.com/Yanyutin753/gpt4-copilot-java?tab=readme-ov-file)
+

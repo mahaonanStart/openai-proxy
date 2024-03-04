@@ -18,6 +18,8 @@ public enum ChatBot {
     ALI_STEAM_AI(8, "aliStream", true),
     GEMINI_AI(9, "gemini", false),
     GEMINI_STREAM_AI(10, "geminiStream", true),
+    COPILOT_AI(20, "copilot", false),
+    COPILOT_STREAM_AI(21, "copilotStream", true),
     ;
 
     private final Integer code;
@@ -43,7 +45,9 @@ public enum ChatBot {
 
     public static boolean isOpenAi(ChatBot chatBot) {
         return chatBot == ChatBot.OPEN_AI
-                || chatBot == ChatBot.OPEN_STREAM_AI;
+                || chatBot == ChatBot.OPEN_STREAM_AI
+                || chatBot == ChatBot.COPILOT_AI
+                || chatBot == ChatBot.COPILOT_STREAM_AI;
     }
 
 
