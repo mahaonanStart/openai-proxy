@@ -80,9 +80,12 @@ gpt.proxy.openai.api-key=
 ```
 
 ### copilot
+
+```
 gpt.proxy.copilot.enabled=false
 gpt.proxy.copilot.model=gpt-4
 gpt.proxy.copilot.api-key=
+```
 
 > copilot代码来源于[gpt4-copilot-java](https://github.com/Yanyutin753/gpt4-copilot-java?tab=readme-ov-file),key和tokenUrl的概念参考该项目
 
