@@ -11,6 +11,11 @@ public class CopilotProperties {
     private boolean enabled;
 
     /**
+     * copilot baseUrl,如果默认的速度很慢,可以考虑用cloudflare代理转发
+     */
+    private String baseUrl = "https://api.githubcopilot.com";
+
+    /**
      * 获取token的url
      */
     private String tokenUrl = "https://api.github.com/copilot_internal/v2/token";

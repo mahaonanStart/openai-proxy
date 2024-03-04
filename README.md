@@ -83,11 +83,42 @@ gpt.proxy.openai.api-key=
 
 ```
 gpt.proxy.copilot.enabled=false
+gpt.proxy.copilot.base-url=https://api.githubcopilot.com
 gpt.proxy.copilot.model=gpt-4
 gpt.proxy.copilot.api-key=
 ```
 
 > copilot代码来源于[gpt4-copilot-java](https://github.com/Yanyutin753/gpt4-copilot-java?tab=readme-ov-file),key和tokenUrl的概念参考该项目
+ 
+> 如果默认的base_url访问太慢,可以使用cloudflare workers代理该地址
+
+```javascript
+const TELEGRAPH_URL = 'https://api.githubcopilot.com';
+
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
+
+async function handleRequest(request) {
+  const url = new URL(request.url);
+  url.host = TELEGRAPH_URL.replace(/^https?:\/\//, '');
+
+  const modifiedRequest = new Request(url.toString(), {
+    headers: request.headers,
+    method: request.method,
+    body: request.body,
+    redirect: 'follow'
+  });
+
+  const response = await fetch(modifiedRequest);
+  const modifiedResponse = new Response(response.body, response);
+
+  // 添加允许跨域访问的响应头
+  modifiedResponse.headers.set('Access-Control-Allow-Origin', '*');
+
+  return modifiedResponse;
+}
+```
 
 ## 使用方法
 

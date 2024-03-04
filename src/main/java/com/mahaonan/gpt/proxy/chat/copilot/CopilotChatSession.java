@@ -33,7 +33,7 @@ import java.util.UUID;
 public class CopilotChatSession extends BaseChatSession {
 
     protected CopilotProperties copilotProperties;
-    protected String COPILOT_URL = "https://api.githubcopilot.com/chat/completions";
+    protected String COPILOT_URL;
     protected String GET_TOKEN_URL;
     protected String apiKey;
     protected Cache<String, String> KEY_TOKEN_MAP = new TimedCache<>(1000 * 60 * 29);
@@ -52,6 +52,7 @@ public class CopilotChatSession extends BaseChatSession {
         super(webClient, gptProxyProperties);
         this.copilotProperties = getGptProxyProperties().getCopilot();
         this.GET_TOKEN_URL = copilotProperties.getTokenUrl();
+        this.COPILOT_URL = copilotProperties.getBaseUrl() + "/chat/completions";
         this.apiKey = copilotProperties.getApiKey();
     }
 
@@ -91,7 +92,7 @@ public class CopilotChatSession extends BaseChatSession {
         String tokenX = getTokenX();
         Map<String, String> headersMap = new HashMap<>();
         //headersMap.put("Host", "api.githubcopilot.com");
-        headersMap.put("Accept-Encoding", "gzip, deflate, br");
+        //headersMap.put("Accept-Encoding", "gzip, deflate, br");
         headersMap.put("Accept", "*/*");
         headersMap.put("Authorization", "Bearer " + tokenX);
         headersMap.put("X-Request-Id", UUID.randomUUID().toString());
