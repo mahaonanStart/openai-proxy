@@ -13,6 +13,7 @@ public enum BotType {
     XFXH_GPT("xfxh"),
     GEMINI_GPT("gemini"),
     COPILOT("copilot"),
+    DOUBLE("double"),
     //轮询
     ALL("all")
     ;

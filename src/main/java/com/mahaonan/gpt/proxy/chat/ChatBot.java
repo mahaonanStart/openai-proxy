@@ -20,6 +20,8 @@ public enum ChatBot {
     GEMINI_STREAM_AI(10, "geminiStream", true),
     COPILOT_AI(20, "copilot", false),
     COPILOT_STREAM_AI(21, "copilotStream", true),
+    DOUBLE_AI(22, "double", false),
+    DOUBLE_STREAM_AI(23, "doubleStream", true)
     ;
 
     private final Integer code;
