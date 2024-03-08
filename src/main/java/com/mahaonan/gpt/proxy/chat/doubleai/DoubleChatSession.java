@@ -8,6 +8,7 @@ import com.mahaonan.gpt.proxy.config.properties.GptProxyProperties;
 import com.mahaonan.gpt.proxy.helper.HttpClientPro;
 import com.mahaonan.gpt.proxy.helper.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @Component("double")
 @Slf4j
+@ConditionalOnProperty(name = "gpt.proxy.double-ai.enabled", havingValue = "true")
 public class DoubleChatSession extends BaseChatSession {
 
     protected String DOUBLE_API_URL;

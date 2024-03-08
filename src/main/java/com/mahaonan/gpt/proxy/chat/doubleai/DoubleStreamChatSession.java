@@ -4,6 +4,7 @@ import com.mahaonan.gpt.proxy.chat.ChatBot;
 import com.mahaonan.gpt.proxy.chat.ChatMessage;
 import com.mahaonan.gpt.proxy.config.properties.GptProxyProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @Component("doubleStream")
 @Slf4j
+@ConditionalOnProperty(name = "gpt.proxy.double-ai.enabled", havingValue = "true")
 public class DoubleStreamChatSession extends DoubleChatSession {
     public DoubleStreamChatSession(WebClient webClient, GptProxyProperties properties) {
         super(webClient, properties);
