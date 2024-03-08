@@ -2,7 +2,7 @@
 
 ## 介绍
 
-openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口. 讯飞星火,通义千问,gemini,openai,copilot
+openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口. 讯飞星火,通义千问,gemini,openai,copilot,double
 使用spring2+webflux构建
 
 目前支持的厂商有:
@@ -12,6 +12,7 @@ openai通用代理转换是一个用于将其他厂商服务转为openai 标准�
 - bito 
 - openai
 - copilot
+- double
 
 ## 版本要求
 
