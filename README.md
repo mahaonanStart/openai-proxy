@@ -120,6 +120,13 @@ async function handleRequest(request) {
 }
 ```
 
+### double
+```
+gpt.proxy.double-ai.enabled=false
+gpt.proxy.double-ai.api-key=
+gpt.proxy.double-ai.model=Claude 3 (Opus)
+```
+
 ## 使用方法
 
 在支持输入openai服务的第三方软件，例如next-web上指定配置
