@@ -17,4 +17,10 @@ public class GlobalExceptionHandler<T> {
         log.error("系统异常", e);
         return ResponseResult.error(901);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseResult<T> handlerRuntime(RuntimeException e) {
+        log.error(e.getMessage());
+        return new ResponseResult<>(-1, e.getMessage());
+    }
 }

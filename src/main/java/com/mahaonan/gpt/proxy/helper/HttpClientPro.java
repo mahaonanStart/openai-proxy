@@ -2,11 +2,13 @@ package com.mahaonan.gpt.proxy.helper;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.http.ContentType;
+import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.ByteArrayOutputStream;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -199,6 +201,47 @@ public class HttpClientPro {
                 HttpResponse.BodyHandlers.fromSubscriber(subscriber));
         futureResponse.join();
     }
+
+    public void delete(String url, Map<String, String> headers) {
+        Objects.requireNonNull(url);
+        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(url)).DELETE();
+        if (MapUtil.isNotEmpty(headers)) {
+            headers.forEach(builder::header);
+        }
+        HttpRequest request = builder.build();
+        try {
+            HttpResponse<Void> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.discarding());
+            int statusCode = httpResponse.statusCode();
+            if (statusCode != 200) {
+                log.error("请求url:{}出错,headers:{},statusCode:{}", url, headers, statusCode);
+            }
+        } catch (Exception e) {
+            log.error("请求url:{}出错,headers:{}", url, headers, e);
+        }
+    }
+
+    public void putFile(String url, Map<String, String> headers, String fileUrl) {
+        Objects.requireNonNull(url);
+        Objects.requireNonNull(fileUrl);
+        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(url));
+        if (MapUtil.isNotEmpty(headers)) {
+            headers.forEach(builder::header);
+        }
+        //先从远程地址获取文件
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        HttpUtil.download(fileUrl, outputStream, true);
+        HttpRequest request = builder.PUT(HttpRequest.BodyPublishers.ofByteArray(outputStream.toByteArray())).build();
+        try {
+            HttpResponse<Void> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.discarding());
+            int statusCode = httpResponse.statusCode();
+            if (statusCode != 200) {
+                log.error("请求url:{}出错,headers:{},statusCode:{}", url, headers, statusCode);
+            }
+        } catch (Exception e) {
+            log.error("请求url:{}出错,headers:{}", url, headers, e);
+        }
+    }
+
 
 
     public static class Builder {

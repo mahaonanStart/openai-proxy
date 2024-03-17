@@ -20,6 +20,7 @@ public class ChatMessage implements Serializable {
     @Setter
     private ChatRoleEnum role;
     @Getter
+    @Setter
     private String content;
     @Getter
     @JsonIgnore

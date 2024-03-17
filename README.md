@@ -2,7 +2,7 @@
 
 ## 介绍
 
-openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口. 讯飞星火,通义千问,gemini,openai,copilot,double
+openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口. 讯飞星火,通义千问,gemini,openai,copilot,double，kimi
 使用spring2+webflux构建
 
 目前支持的厂商有:
@@ -12,7 +12,8 @@ openai通用代理转换是一个用于将其他厂商服务转为openai 标准�
 - bito 
 - openai
 - copilot
-- double
+- double（已限制失效）
+- kimi chat
 
 ## 版本要求
 
@@ -90,7 +91,7 @@ gpt.proxy.copilot.api-key=
 ```
 
 > copilot代码来源于[gpt4-copilot-java](https://github.com/Yanyutin753/gpt4-copilot-java?tab=readme-ov-file),key和tokenUrl的概念参考该项目
- 
+
 > 如果默认的base_url访问太慢,可以使用cloudflare workers代理该地址
 
 ```javascript
@@ -122,11 +123,60 @@ async function handleRequest(request) {
 ```
 
 ### double
+
+已失效
+
 ```
 gpt.proxy.double-ai.enabled=false
 gpt.proxy.double-ai.api-key=
 gpt.proxy.double-ai.model=Claude 3 (Opus)
 ```
+
+### kimi
+
+kimi-chat。
+
+仅支持单人使用，切记切记！！！
+
+kimi的使用有所不同，需要在项目根目录的kimi.json文件中，配置refresh_token
+
+refresh_token的获取方法如下图所示：
+
+![refresh_token](./img/kimichat.png)
+
+只需要refresh_token即可，后续的access_token会自动续期
+
+由于模拟的是网页端的接口，因此需要通过以下指令开始对话。
+
+- 新建会话
+
+  > 开始一轮新的对话，后续的对话共享上下文
+
+- 删除会话
+
+  > 删除当前会话
+
+- 联网
+
+  > 以联网开头的问题，会自动调用联网搜索，效果如图：
+  >
+  > ![联网](./img/kimi-search.png)
+
+- 刷新token
+
+  > 如果遇到种种不能使用的场景，尝试该指令刷新token
+
+- `https://xxx`
+
+  > 直接输入一个链接，会调用网页分析，效果如图
+  >
+  > ![web](./img/kimi-web.png)
+
+- 文件
+
+  > 以文件开头的指令，会解析提问中的文件链接（目前仅支持一个），效果如下
+  >
+  > ![file](./img/kimi-file.png)
 
 ## 使用方法
 
@@ -148,6 +198,7 @@ apiKey：gpt-proxy-xfxh
 - bito：gpt-proxy-bito
 - openai：gpt-proxy-openai
 - copilot: gpt-proxy-copilot
+- kimi：gpt-proxy-kimi
 - 轮询：gpt-proxy-all
 
 > 可通过gpt.proxy.key-prefix= xxx 配置更改前缀
