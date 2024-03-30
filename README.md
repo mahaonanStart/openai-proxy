@@ -53,14 +53,31 @@ gpt.proxy.ali.model=qwen-max
 
 ### bito
 
+可在网页登录https://alpha.bito.ai/home/
+
+然后打开F12 -> Application -> Storage -> Local storage中找到如下信息，对应关系如下
+
+userId -> bito-user-id
+
+wsId -> ws-id
+
+userToken -> auth-token
+
+cookieEmail -> email
+
+注意：第三方软件中如果是gpt-3开头的会调用bito的BASIC模型
+
+gpt4开头的会调用bito的ADVANCED模型
+
+```java
+aiModelType(proxyRequest.getModel().startsWith("gpt-4") ? "ADVANCED" : "BASIC")
+```
+
 ```
 gpt.proxy.bito.enabled=true
 gpt.proxy.bito.bito-user-id=
 gpt.proxy.bito.email=
-gpt.proxy.bito.request-id=
-gpt.proxy.bito.header-authorization=
-gpt.proxy.bito.session-id=
-gpt.proxy.bito.u-id=
+gpt.proxy.bito.auth-token=
 gpt.proxy.bito.ws-id=
 ```
 
@@ -77,7 +94,6 @@ gpt.proxy.gemini.key=
 ```
 gpt.proxy.openai.enabled=true
 gpt.proxy.openai.base-url=https://api.openai.com
-gpt.proxy.openai.model=
 gpt.proxy.openai.api-key=
 ```
 

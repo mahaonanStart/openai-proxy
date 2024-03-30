@@ -113,6 +113,9 @@ public class XfxhChatSession extends BaseChatSession {
             content = content.replace("[code]", "```").replace("[/code]", "```");
             sb.append(content);
         }
+        if (myJsonParse.header.status == 2) {
+            sb.append("[DONE]");
+        }
         return sb.toString();
     }
 

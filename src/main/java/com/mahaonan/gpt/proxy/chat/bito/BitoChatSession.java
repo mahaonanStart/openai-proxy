@@ -7,7 +7,9 @@ import com.mahaonan.gpt.proxy.chat.ChatRoleEnum;
 import com.mahaonan.gpt.proxy.config.properties.BitoProperties;
 import com.mahaonan.gpt.proxy.config.properties.GptProxyProperties;
 import com.mahaonan.gpt.proxy.helper.HttpClientPro;
+import com.mahaonan.gpt.proxy.helper.HttpRequestHolder;
 import com.mahaonan.gpt.proxy.helper.JsonUtils;
+import com.mahaonan.gpt.proxy.model.GptProxyRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -63,7 +65,7 @@ public class BitoChatSession extends BaseChatSession {
         BitoRequest bitoRequest = buildRequest(question, messages);
         bitoRequest.setStream(false);
         Map<String, String> headers = new HashMap<>(commonHeaders);
-        headers.put("authorization", bitoRequest.getHeaderAuthorization());
+        headers.put("authorization", bitoRequest.getAuthToken());
         String res = HttpClientPro.getInstance().postJson(bitoProperties.getUrl(), JsonUtils.objectToJson(bitoRequest), headers, null,null, String.class);
         Matcher matcher = BITO_DATA_PATTERN.matcher(res);
         StringBuilder sb = new StringBuilder();
@@ -76,18 +78,27 @@ public class BitoChatSession extends BaseChatSession {
     }
 
     protected BitoRequest buildRequest(String question, List<ChatMessage> messages) {
+        GptProxyRequest proxyRequest = HttpRequestHolder.get();
         BitoRequest request = BitoRequest.builder()
                 .bitoUserId(bitoProperties.getBitoUserId())
                 .email(bitoProperties.getEmail())
                 .ideName("JB")
                 .prompt(question)
-                .uid(bitoProperties.getUId())
+                .uid("f23f5e28-2e0e-4099-807c-e109d73ffbdf")
                 .wsId(bitoProperties.getWsId())
                 .stream(false)
-                .requestId(bitoProperties.getRequestId())
-                .sessionId(bitoProperties.getSessionId())
+                .requestId("43b96d8b-cf50-648a-5c4f-e7f6ea3401f9")
+                .sessionId("07c4a456-4171-5f3f-c8da-9c2f5e283dde")
                 .context(new ArrayList<>())
-                .headerAuthorization(bitoProperties.getHeaderAuthorization())
+                .authToken(bitoProperties.getAuthToken())
+                .outputLanguage("Chinese (Simplified)")
+                .aiModelType(proxyRequest.getModel().startsWith("gpt-4") ? "ADVANCED" : "BASIC")
+                .agentAPI("https://lca.bito.ai/ai/v2/selectAgent/?processSilently=true")
+                .embeddingAPI("https://lca.bito.ai/ai/v2/embedding/?processSilently=true")
+                .contextAnswerAPI("https://lca.bito.ai/ai/v2/contextAnswer/?processSilently=true")
+                .method("POST")
+                .topN(String.valueOf(proxyRequest.getTopP()))
+                .topNThreshold("0.7")
                 .build();
         for (ChatMessage message : messages) {
             BitoRequest.Context context = new BitoRequest.Context();

@@ -1,5 +1,6 @@
 package com.mahaonan.gpt.proxy.chat.xfxh;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.mahaonan.gpt.proxy.chat.ChatBot;
 import com.mahaonan.gpt.proxy.chat.ChatMessage;
@@ -44,7 +45,14 @@ public class XfxhChatStreamSession extends XfxhChatSession {
                         .thenMany(session
                                 .receive()
                                 .mapNotNull(msg -> dealOriginMsg(msg.getPayloadAsText())))
-                        .doOnNext(processor::onNext)
+                        .doOnNext(text -> {
+                            if (text.contains("[DONE]")) {
+                                processor.onNext(text.replace("[DONE]", ""));
+                                processor.onNext("[DONE]");
+                            }else {
+                                processor.onNext(text);
+                            }
+                        })
                         .doFinally(signalType -> {
                             // 在完成时关闭 WebSocket 连接
                             if (signalType.equals(SignalType.ON_COMPLETE) || signalType.equals(SignalType.ON_ERROR)) {
@@ -53,5 +61,10 @@ public class XfxhChatStreamSession extends XfxhChatSession {
                             }
                         }).then()).subscribe();
         return processor;
+    }
+
+    @Override
+    protected boolean isEnd(StringBuilder totalMsg, String currMsg) {
+        return "[DONE]".equals(currMsg) && StrUtil.isNotEmpty(totalMsg);
     }
 }

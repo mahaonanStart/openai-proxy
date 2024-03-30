@@ -12,17 +12,11 @@ public class BitoProperties {
 
     private String url = "https://bitoai.bito.co/ai/v2/chat/?processSilently=true";
 
-    private String headerAuthorization;
+    private String authToken;
 
     private Integer bitoUserId;
 
     private String email;
 
-    private String uId;
-
     private Integer wsId;
-
-    private String requestId;
-
-    private String sessionId;
 }

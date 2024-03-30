@@ -1,6 +1,7 @@
 package com.mahaonan.gpt.proxy.config;
 
 import cn.hutool.core.util.StrUtil;
+import com.mahaonan.gpt.proxy.helper.HttpRequestHolder;
 import com.mahaonan.gpt.proxy.helper.JsonUtils;
 import com.mahaonan.gpt.proxy.model.GptProxyRequest;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -27,6 +28,8 @@ public class ChangeResponseFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        HttpRequestHolder.remove();
+
         ServerHttpResponse response = exchange.getResponse();
         ServerHttpRequest request = exchange.getRequest();
         response.getHeaders().add("Access-Control-Allow-Origin", "*");
@@ -53,6 +56,7 @@ public class ChangeResponseFilter implements WebFilter {
                     String originalRequestBody = new String(bytes, StandardCharsets.UTF_8);
                     if (StrUtil.isNotEmpty(originalRequestBody)) {
                         GptProxyRequest proxyRequest = JsonUtils.parse(originalRequestBody, GptProxyRequest.class);
+                        HttpRequestHolder.set(proxyRequest);
                         if (proxyRequest != null && Objects.equals(true, proxyRequest.getStream())) {
                             response.getHeaders().set("Cache-Control", "no-cache");
                             response.getHeaders().set("Content-Type", "text/event-stream");

@@ -6,7 +6,9 @@ import com.mahaonan.gpt.proxy.chat.ChatMessage;
 import com.mahaonan.gpt.proxy.config.properties.GptProxyProperties;
 import com.mahaonan.gpt.proxy.config.properties.OpenaiProperties;
 import com.mahaonan.gpt.proxy.helper.HttpClientPro;
+import com.mahaonan.gpt.proxy.helper.HttpRequestHolder;
 import com.mahaonan.gpt.proxy.helper.JsonUtils;
+import com.mahaonan.gpt.proxy.model.GptProxyRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -44,12 +46,16 @@ public class OpenaiChatSession extends BaseChatSession {
     }
 
     protected Map<String, Object> buildParams(List<ChatMessage> messages, boolean stream) {
+        GptProxyRequest request = HttpRequestHolder.get();
         Map<String, Object> params = new HashMap<>();
         params.put("messages", messages);
-        params.put("model", openaiProperties.getModel());
-        params.put("temperature", openaiProperties.getTemperature());
-        params.put("presence_penalty", openaiProperties.getPresencePenalty());
+        params.put("model", request.getModel());
+        params.put("temperature", request.getTemperature());
+        params.put("top_p", request.getTopP());
+        params.put("presence_penalty", request.getPresencePenalty());
+        params.put("frequency_penalty", request.getFrequencyPenalty());
         params.put("stream", stream);
+        params.put("tools", request.getTools());
         return params;
     }
 

@@ -1,5 +1,6 @@
 package com.mahaonan.gpt.proxy.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mahaonan.gpt.proxy.chat.ChatMessage;
 import com.mahaonan.gpt.proxy.constant.BotType;
 import lombok.Data;
@@ -16,12 +17,15 @@ import java.util.List;
 public class GptProxyRequest implements Serializable {
 
     private List<ChatMessage> messages;
-
-    private String model;
-
     private Boolean stream;
-
-    private String prompt;
-
     private BotType botType;
+    private Double temperature;
+    @JsonProperty("top_p")
+    private Double topP;
+    private String model;
+    @JsonProperty("frequency_penalty")
+    private Double frequencyPenalty;
+    @JsonProperty("presence_penalty")
+    private Double presencePenalty;
+    private List<Tool> tools;
 }

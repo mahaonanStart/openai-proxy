@@ -44,6 +44,17 @@ public abstract class BaseChatSession {
      */
     protected abstract Flux<String> postChat(String question, List<ChatMessage> messages);
 
+
+    /**
+     * 会话是否结束的标记
+     * @param totalMsg 当前已经收到的全部回答
+     * @param currMsg 流式传输当前回答
+     * @return
+     */
+    protected boolean isEnd(StringBuilder totalMsg, String currMsg) {
+        return false;
+    }
+
     /**
      * 权重
      */
@@ -77,6 +88,9 @@ public abstract class BaseChatSession {
         Flux<String> result;
         if (this.getChatBot().isStream()) {
             result = webFlux.map(data -> {
+                if (this.isEnd(sb, data)) {
+                    return "[DONE]";
+                }
                 sb.append(data);
                 ChatGptAnswer answer = new ChatGptAnswer();
                 answer.setId(id);

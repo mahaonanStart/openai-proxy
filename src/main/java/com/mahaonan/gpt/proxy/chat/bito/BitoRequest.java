@@ -56,7 +56,17 @@ public class BitoRequest implements Serializable {
     private boolean stream;
 
     @JsonIgnore
-    private String headerAuthorization;
+    private String authToken;
+
+    private String outputLanguage;
+    private String aiModelType;
+    private String agentAPI;
+    private String embeddingAPI;
+    private String contextAnswerAPI;
+    private String method;
+    private String topN;
+    private String topNThreshold;
+
 
     @Data
     public static class Context {
