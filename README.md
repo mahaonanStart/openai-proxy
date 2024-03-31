@@ -3,7 +3,7 @@
 ## 介绍
 
 openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口. 讯飞星火,通义千问,gemini,openai,copilot,double，kimi，智谱清言
-使用spring2+webflux构建
+使用spring2+webflux构建。支持docker部署
 
 目前支持的厂商有:
 - 科大讯飞 -> 讯飞星火
@@ -16,10 +16,46 @@ openai通用代理转换是一个用于将其他厂商服务转为openai 标准�
 - kimi chat 网页版
 - 智谱清言 网页版模拟
 
-## 版本要求
+## 部署方式
 
-jdk11
-springboot2
+1. java本地构建，需要JDK11版本
+
+2. docker部署(推荐)
+
+   - 拉取docker镜像
+
+     ```
+     docker pull mahaonan/openai-proxy:latest
+     ```
+
+   - 在本地目录配置如下配置文件
+
+     - config.properties，参考项目中的config.properties，配置ai信息
+     - glm.json，如果需要使用智谱清言，配置该文件
+     - kimi.json，如果需要使用kimi，配置该文件
+
+     > 也可以使用下述指令拉取模板
+     >
+     > ```
+     > curl -O https://raw.githubusercontent.com/mahaonanStart/openai-proxy/main/glm.json && curl -O https://raw.githubusercontent.com/mahaonanStart/openai-proxy/main/kimi.json && curl -O https://raw.githubusercontent.com/mahaonanStart/openai-proxy/main/config.properties
+     > ```
+
+   - 修改配置文件中的配置，详细设置见后面的配置模块
+
+   - 启动容器
+
+     ```
+     ddocker run -d --name openai-proxy \
+       -v  $PWD/config.properties:/app/config.properties \
+       -v  $PWD/glm.json:/app/glm.json \
+       -v  $PWD/kimi.json:/app/kimi.json \
+       -p 9001:9001 \
+     docker.io/mahaonan/openai-proxy:latest
+     ```
+
+     `-v`前面的参数是刚才配置的本地路径配置文件，可自定义
+
+     后面的参数是容器内路径，不要修改
 
 ## 配置
 
