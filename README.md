@@ -2,7 +2,7 @@
 
 ## 介绍
 
-openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口. 讯飞星火,通义千问,gemini,openai,copilot,double，kimi
+openai通用代理转换是一个用于将其他厂商服务转为openai 标准接口相应的工具. 通过该工具, 可以将其他厂商的服务转为openai 标准接口. 讯飞星火,通义千问,gemini,openai,copilot,double，kimi，智谱清言
 使用spring2+webflux构建
 
 目前支持的厂商有:
@@ -13,7 +13,8 @@ openai通用代理转换是一个用于将其他厂商服务转为openai 标准�
 - openai
 - copilot
 - double（已限制失效）
-- kimi chat
+- kimi chat 网页版
+- 智谱清言 网页版模拟
 
 ## 版本要求
 
@@ -194,6 +195,42 @@ refresh_token的获取方法如下图所示：
   >
   > ![file](./img/kimi-file.png)
 
+### 智谱清言
+
+支持图片生成，联网搜索，文件解析，代码运行等。
+
+仅支持单人使用，切记切记！！！
+
+智谱清言的使用有所不同，需要在项目根目录的glm.json文件中，配置refresh_token
+
+refresh_token的获取方法如下图所示：
+
+![glm](./img/glm.png)
+
+只需要refresh_token即可，后续的access_token会自动续期
+
+由于模拟的是网页端的接口，因此需要通过以下指令开始对话。
+
+- 新建会话
+
+  > 开始一轮新的对话，后续的对话共享上下文
+
+- 删除会话
+
+  > 删除当前会话
+
+- 文件
+
+  > 以文件开头的指令，会解析提问中的文件链接（目前仅支持一个)
+
+- 刷新会话
+
+  > 新建一个会话，不会删除之前的绘画
+
+- 刷新token
+
+  > 主动刷新access_token
+
 ## 使用方法
 
 在支持输入openai服务的第三方软件，例如next-web上指定配置
@@ -215,6 +252,7 @@ apiKey：gpt-proxy-xfxh
 - openai：gpt-proxy-openai
 - copilot: gpt-proxy-copilot
 - kimi：gpt-proxy-kimi
+- 智谱清言：gpt-proxy-glm
 - 轮询：gpt-proxy-all
 
 > 可通过gpt.proxy.key-prefix= xxx 配置更改前缀

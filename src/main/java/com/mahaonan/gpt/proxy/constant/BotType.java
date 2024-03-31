@@ -15,6 +15,7 @@ public enum BotType {
     COPILOT("copilot"),
     DOUBLE("double"),
     KIMI("kimi"),
+    GLM("glm"),
     //轮询
     ALL("all")
     ;

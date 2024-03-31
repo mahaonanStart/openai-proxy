@@ -24,6 +24,8 @@ public enum ChatBot {
     DOUBLE_STREAM_AI(23, "doubleStream", true),
     KIMI_AI(24, "kimi", false),
     KIMI_STREAM_AI(25, "kimiStream", true),
+    GLM_AI(26, "glm", false),
+    GLM_STREAM_AI(27, "glmStream", true),
     ;
 
     private final Integer code;

@@ -3,12 +3,14 @@ package com.mahaonan.gpt.proxy.helper;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.http.ContentType;
 import cn.hutool.http.HttpUtil;
+import com.mahaonan.gpt.proxy.chat.glm.Glm4FileUploadResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -17,6 +19,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -240,6 +243,74 @@ public class HttpClientPro {
         } catch (Exception e) {
             log.error("请求url:{}出错,headers:{}", url, headers, e);
         }
+    }
+
+    public <T> T postFile(String url, Map<String, String> headers, String fileUrl, Class<T> clazz) {
+        Objects.requireNonNull(url);
+        Objects.requireNonNull(fileUrl);
+        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(url));
+        if (MapUtil.isNotEmpty(headers)) {
+            headers.forEach(builder::header);
+        }
+
+        //先从远程地址获取文件
+        // 从远程地址下载文件到字节数组
+        byte[] fileContent = downloadFile(fileUrl);
+        if (fileContent == null) {
+            System.err.println("文件下载失败");
+            return null;
+        }
+        int fileSize = fileContent.length;
+        //从fileUrl中提取文件名
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+
+        // 构建multipart/form-data请求体
+        HttpRequest.BodyPublisher bodyPublisher = ofMimeMultipartData(fileContent, "file", fileName);
+        builder.header("Content-Type", "multipart/form-data; boundary=" + boundary);
+        HttpRequest request = builder
+                .POST(bodyPublisher).build();
+
+        try {
+            HttpResponse<String> httpResponse = httpClient.send(request, (responseInfo) -> HttpResponse.BodySubscribers.ofString(Charset.forName(DEFAULT_CHARSET)));
+            int statusCode = httpResponse.statusCode();
+            if (statusCode != 200) {
+                log.error("请求url:{}出错,headers:{},statusCode:{}", url, headers, statusCode);
+            }
+            T t = clazz == String.class ? (T) httpResponse.body() : JsonUtils.parse(httpResponse.body(), clazz);
+            if (t instanceof Glm4FileUploadResponse) {
+                ((Glm4FileUploadResponse) t).setFileLength(fileSize);
+            }
+            return t;
+        } catch (Exception e) {
+            log.error("请求url:{}出错,headers:{}", url, headers, e);
+        }
+        return null;
+    }
+
+    private byte[] downloadFile(String fileUrl) {
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(fileUrl)).GET().build();
+        try {
+            HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            if (response.statusCode() == 200) {
+                return response.body();
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static final String boundary = "Boundary-" + System.currentTimeMillis();
+
+    private static HttpRequest.BodyPublisher ofMimeMultipartData(byte[] fileContent, String paramName, String fileName) {
+        //根据文件名后缀,设置不同的content-type
+        var byteArrays = new java.util.ArrayList<byte[]>();
+        var separator = ("--" + boundary + "\r\nContent-Disposition: form-data; name=\"" + paramName + "\"; filename=\"" + fileName  + "\"\r\nContent-Type: " + HttpUtil.getMimeType(fileName) + "\r\n\r\n").getBytes(StandardCharsets.UTF_8);
+        byteArrays.add(separator);
+        byteArrays.add(fileContent);
+        var terminator = ("\r\n--" + boundary + "--").getBytes(StandardCharsets.UTF_8);
+        byteArrays.add(terminator);
+        return HttpRequest.BodyPublishers.ofByteArrays(byteArrays);
     }
 
 
