@@ -33,7 +33,7 @@ public class BitoStreamChatSession extends BitoChatSession {
         BitoRequest bitoRequest = buildRequest(question, messages);
         bitoRequest.setStream(true);
         Map<String, String> headers = new HashMap<>(commonHeaders);
-        headers.put("authorization", bitoRequest.getHeaderAuthorization());
+        headers.put("authorization", bitoRequest.getAuthToken());
         Flux<String> originResult = getWebClient().post()
                 .uri(bitoProperties.getUrl())
                 .headers(httpHeaders -> {
