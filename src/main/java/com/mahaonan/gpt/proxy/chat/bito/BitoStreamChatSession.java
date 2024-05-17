@@ -33,7 +33,7 @@ public class BitoStreamChatSession extends BitoChatSession {
         BitoRequest bitoRequest = buildRequest(question, messages);
         bitoRequest.setStream(true);
         Map<String, String> headers = new HashMap<>(commonHeaders);
-        headers.put("authorization", bitoRequest.getAuthToken());
+        headers.put("authorization", bitoRequest.getHeaderAuthorization());
         Flux<String> originResult = getWebClient().post()
                 .uri(bitoProperties.getUrl())
                 .headers(httpHeaders -> {
@@ -59,12 +59,12 @@ public class BitoStreamChatSession extends BitoChatSession {
     }
 
     @Override
-    protected ChatBot setChatBot() {
-        return ChatBot.BITO_STEAM_AI;
+    protected boolean isEnd(StringBuilder totalMsg, String currMsg) {
+        return "data:[DONE]".equals(currMsg);
     }
 
     @Override
-    protected boolean isEnd(StringBuilder totalMsg, String currMsg) {
-        return "data:[DONE]".equals(currMsg);
+    protected ChatBot setChatBot() {
+        return ChatBot.BITO_STEAM_AI;
     }
 }

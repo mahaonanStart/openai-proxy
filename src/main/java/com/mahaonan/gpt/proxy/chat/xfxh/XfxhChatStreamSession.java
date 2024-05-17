@@ -49,7 +49,7 @@ public class XfxhChatStreamSession extends XfxhChatSession {
                             if (text.contains("[DONE]")) {
                                 processor.onNext(text.replace("[DONE]", ""));
                                 processor.onNext("[DONE]");
-                            }else {
+                            } else {
                                 processor.onNext(text);
                             }
                         })

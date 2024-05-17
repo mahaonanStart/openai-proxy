@@ -74,6 +74,8 @@ public class KimiChatSession extends BaseChatSession {
                             }
                         case "cmpl":
                             return responseModel.getText();
+                        case "all_done":
+                            return "[DONE]";
                     }
                     return "";
                 })
@@ -118,5 +120,10 @@ public class KimiChatSession extends BaseChatSession {
         headers.put("Origin", "https://kimi.moonshot.cn");
         headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36");
         return headers;
+    }
+
+    @Override
+    protected boolean isEnd(StringBuilder totalMsg, String currMsg) {
+        return "[DONE]".equals(currMsg);
     }
 }
