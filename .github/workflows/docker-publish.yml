@@ -1,0 +1,98 @@
+姓名:Docker
+
+#此工作流使用未经GitHub认证的操作。
+#它们由第三方提供，并由
+#单独的服务条款、隐私政策和支持
+#documentation。
+
+在……之上:
+计划表:
+-克朗:'42 16 * * *'
+推:
+分支机构:[ "主要" ]
+    #将semver标签发布为版本。
+标签:[ 'v*.*.*' ]
+pull_request:
+分支机构:[ "主要" ]
+
+env:
+  #如果Docker Hub为空，请使用Docker.IO
+注册表:ghcr.io
+  #github.repository as<account>/<repo>
+image_NAME:${{github.repository}}
+
+
+工作:
+建立:
+
+run-on:ubuntu-最新
+权限:
+内容:读
+包:写
+      #完成身份质询
+      #在PR之外运行时使用sigstore/fulcio。
+id-token:写
+
+步骤:
+-姓名:签出存储库
+uses:操作/结帐@v4
+
+      #安装除PR外的cosign工具
+      #https://github.com/sigstore/cosign-installer
+-姓名:安装协同签名
+如果:github.event_name！='pull_request'
+uses:sigstore/cosign-installer@6e04d228eb30da1757ee4e1dd75a0ec73a653e06#v3.1.1
+和……一起:
+协同标志释放:'v2.1.1'
+
+      #将BuildKit Docker容器生成器设置为能够构建
+      #多平台图片及导出缓存
+      #https://github.com/docker/setup-buildx-action
+-姓名:设置Docker Buildx
+uses:Docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226#v3.0.0
+
+      #登录Docker注册表(PR除外)
+      #https://github.com/docker/login-action
+-姓名:登录到注册表${{环境登记}}
+如果:github.event_name！='pull_request'
+uses:Docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d#v3.0.0
+和……一起:
+注册表:${{环境登记}}
+用户名:${{github.actor}}
+密码:${{secrets.GITHUB_TOKEN}}
+
+      #Docker提取元数据(标签、标签)
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Sign the resulting Docker image digest except on PRs.
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        # This step uses the identity token to provision an ephemeral certificate
+        # against the sigstore community Fulcio instance.
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
